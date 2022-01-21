@@ -1,5 +1,6 @@
 from Engine.doublylinkedlist import DoublyLinkedList
 from Engine.direction import Direction
+import random
 
 class Snake():
     def __init__(self, screen):
@@ -44,6 +45,10 @@ class Snake():
         self.body_set.add((x, y))
         self.empty_set.discard((x, y))
 
+    def update_head(self, head):
+        self.body_list.remove_beginning()
+        self.body_list.prepend(head)
+
     def is_border_intersection(self, new_head_x, new_head_y):
         if new_head_x > self.screen_width or new_head_x < 0:
             return True
@@ -74,13 +79,13 @@ class Snake():
 
         if curr_head_direction == Direction.UP:
             new_head_x = curr_head_x
-            new_head_y = curr_head_y + 1
+            new_head_y = curr_head_y - 1
         elif curr_head_direction == Direction.RIGHT:
             new_head_x = curr_head_x + 1
             new_head_y = curr_head_y
         elif curr_head_direction == Direction.DOWN:
             new_head_x = curr_head_x
-            new_head_y = curr_head_y - 1
+            new_head_y = curr_head_y + 1
         elif curr_head_direction == Direction.LEFT:
             new_head_x = curr_head_x - 1
             new_head_y = curr_head_y
@@ -99,6 +104,12 @@ class Snake():
 
         if not self.is_eat_food(self.food):
             self.remove_tail()
+        else:
+            self.food = self.create_food()
 
     def to_list(self):
         return self.body_list.to_list()
+
+    def key_pressed(self, direction):
+        x, y, dir = self.get_head()
+        self.update_head((x, y, direction))

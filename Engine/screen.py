@@ -63,4 +63,7 @@ class Screen:
             x, y, dir = piece
             self.set_pixel_in_buffer(x, y)
 
+        food_x, food_y = snake.food
+        self.set_pixel_in_buffer(food_x, food_y)
+        
         self.update()
