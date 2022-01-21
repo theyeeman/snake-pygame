@@ -173,13 +173,13 @@ class DoublyLinkedList():
 #     print(dll4)
 
 ## test peek
-dll5 = DoublyLinkedList()
+# dll5 = DoublyLinkedList()
 
-for i in range(10):  # Fill list
-    if i % 2 == 0:
-        dll5.append(Node(i))
-    else:
-        dll5.prepend(Node(i))
+# for i in range(10):  # Fill list
+#     if i % 2 == 0:
+#         dll5.append(Node(i))
+#     else:
+#         dll5.prepend(Node(i))
     
-    print(dll5)
-    print(f'peek beginning {dll5.peek_beginning()}, peek end {dll5.peek_end()}\n')
+#     print(dll5)
+#     print(f'peek beginning {dll5.peek_beginning()}, peek end {dll5.peek_end()}\n')
