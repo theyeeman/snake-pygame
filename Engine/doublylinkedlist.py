@@ -43,13 +43,7 @@ class DoublyLinkedList():
             self.head = new_node
 
     def remove_end(self):
-        if not self.head:
-            return
-        elif not self.head.next:
-            self.head = None
-        else:
-            self.tail = self.tail.prev
-            self.tail.next = None
+        self.pop_end()
 
     def pop_end(self):
         if not self.head:
@@ -65,14 +59,14 @@ class DoublyLinkedList():
 
         return ret
 
+    def peek_end(self):
+        if not self.tail:
+            return None
+
+        return self.tail.val
+
     def remove_beginning(self):
-        if not self.head:
-            return
-        elif not self.head.next:
-            self.head = None
-        else:
-            self.head = self.head.next
-            self.head.prev = None
+        self.pop_beginning()
 
     def pop_beginning(self):
         if not self.head:
@@ -87,6 +81,12 @@ class DoublyLinkedList():
             self.head.prev = None
         
         return ret
+
+    def peek_beginning(self):
+        if not self.head:
+            return None
+
+        return self.head.val
 
 
 # Tests
@@ -128,6 +128,7 @@ class DoublyLinkedList():
 # dll2.remove_end()
 # print(dll2.head)
 
+## test remove
 # dll3 = DoublyLinkedList()
 
 # for i in range(10):  # Fill list
@@ -150,6 +151,7 @@ class DoublyLinkedList():
 
 #     print(dll3)
 
+## test pop
 # dll4 = DoublyLinkedList()
 
 # for i in range(10):  # Fill list
@@ -169,3 +171,15 @@ class DoublyLinkedList():
 #         print(f'Popping end has value {dll4.pop_end()}')
 
 #     print(dll4)
+
+## test peek
+dll5 = DoublyLinkedList()
+
+for i in range(10):  # Fill list
+    if i % 2 == 0:
+        dll5.append(Node(i))
+    else:
+        dll5.prepend(Node(i))
+    
+    print(dll5)
+    print(f'peek beginning {dll5.peek_beginning()}, peek end {dll5.peek_end()}\n')
