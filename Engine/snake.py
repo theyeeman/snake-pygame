@@ -99,3 +99,6 @@ class Snake():
 
         if not self.is_eat_food(self.food):
             self.remove_tail()
+
+    def to_list(self):
+        return self.body_list.to_list()

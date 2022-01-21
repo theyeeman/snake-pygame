@@ -1,3 +1,6 @@
+from email import header
+
+
 class Node():
     def __init__(self, val=None):
         self.prev = None
@@ -92,6 +95,17 @@ class DoublyLinkedList():
 
         return self.head.val
 
+    def to_list(self):
+        curr = self.head
+        ret = []
+
+        while curr:
+            ret.append(curr.val)
+            curr = curr.next
+
+        return ret
+
+
 
 # Tests
 # dll = DoublyLinkedList()
@@ -101,6 +115,7 @@ class DoublyLinkedList():
 # dll.prepend(4)
 # dll.prepend(5)
 # print(dll.head)
+# print(dll.to_list())
 
 # dll1 = DoublyLinkedList()
 # dll1.append(1)

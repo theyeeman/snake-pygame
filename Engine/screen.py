@@ -5,21 +5,21 @@ PIXEL_ON = Color(255, 255, 255, 255)
 
 class Screen:
     def __init__(self, width, height, scale=10):
-        self.width = width
-        self.height = height
+        self.width = width * scale
+        self.height = height * scale
         self.scale = scale
 
-    def init_display(self,):
+    def init_display(self):
         display.init()
         self.surface = display.set_mode([self.width, self.height])
         self.clear_screen()
         self.update()
 
     def get_width(self):
-        return self.width
+        return self.width // self.scale
 
     def get_height(self):
-        return self.height
+        return self.height // self.scale
 
     def get_scale(self):
         return self.scale
@@ -55,3 +55,12 @@ class Screen:
             return False
         else:
             return True
+
+    def draw_snake(self, snake):
+        s = snake.to_list()
+
+        for piece in s:
+            x, y, dir = piece
+            self.set_pixel_in_buffer(x, y)
+
+        self.update()
