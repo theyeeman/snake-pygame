@@ -8,7 +8,7 @@ class Snake():
         self.body_list = DoublyLinkedList()
         self.body_set = set()
         self.is_dead = False
-        self.empty_set = self._generate_empty_set()
+        self.empty_set = self.generate_empty_set()
 
         head_x = self.screen_width // 2
         head_y = self.screen_height // 2
@@ -17,7 +17,7 @@ class Snake():
         self.empty_set.discard((head_x, head_y))
         self.food = self.create_food()
         
-    def _generate_empty_set(self):
+    def generate_empty_set(self):
         s = set()
         
         for i in range(self.screen_width):
@@ -33,9 +33,18 @@ class Snake():
         return self.body_list.peek_end()
 
     def remove_tail(self):
-        self.body_list.remove_end()
+        tail = self.body_list.pop_end()
+        x, y, dir = tail
+        self.body_set.discard((x, y))
+        self.empty_set.add((x, y))
 
-    def _is_border_intersection(self, new_head_x, new_head_y):
+    def insert_head(self, head):
+        x, y, dir = head
+        self.body_list.prepend(head)
+        self.body_set.add((x, y))
+        self.empty_set.discard((x, y))
+
+    def is_border_intersection(self, new_head_x, new_head_y):
         if new_head_x > self.screen_width or new_head_x < 0:
             return True
         
@@ -58,3 +67,35 @@ class Snake():
         self.empty_set.add(temp)
 
         return temp
+
+    def move_snake(self):        
+        curr_head_x, curr_head_y, curr_head_direction = self.get_head()
+        new_head_direction = curr_head_direction
+
+        if curr_head_direction == Direction.UP:
+            new_head_x = curr_head_x
+            new_head_y = curr_head_y + 1
+        elif curr_head_direction == Direction.RIGHT:
+            new_head_x = curr_head_x + 1
+            new_head_y = curr_head_y
+        elif curr_head_direction == Direction.DOWN:
+            new_head_x = curr_head_x
+            new_head_y = curr_head_y - 1
+        elif curr_head_direction == Direction.LEFT:
+            new_head_x = curr_head_x - 1
+            new_head_y = curr_head_y
+        else:
+            print('No direction in head. Something went wrong. This should never print.')
+
+        if (new_head_x, new_head_y) in self.body_set:  # Snake ran into itself
+            self.is_dead = True
+            return
+
+        if self.is_border_intersection(new_head_x, new_head_y):
+            self.is_dead = True
+            return
+
+        self.insert_head((new_head_x, new_head_y, new_head_direction))
+
+        if not self.is_eat_food(self.food):
+            self.remove_tail()
