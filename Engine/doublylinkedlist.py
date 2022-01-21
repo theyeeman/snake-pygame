@@ -22,7 +22,9 @@ class DoublyLinkedList():
     def __str__(self):
         return str(self.head)
 
-    def append(self, new_node):
+    def append(self, val):
+        new_node = Node(val)
+
         if not self.head:  # 0 elements
             self.head = new_node
             self.tail = self.head
@@ -32,7 +34,9 @@ class DoublyLinkedList():
             new_node.prev = self.tail
             self.tail = new_node
 
-    def prepend(self, new_node):
+    def prepend(self, val):
+        new_node = Node(val)
+
         if not self.head:
             self.head = new_node
             self.tail = self.head
@@ -91,31 +95,31 @@ class DoublyLinkedList():
 
 # Tests
 # dll = DoublyLinkedList()
-# dll.prepend(Node(1))
-# dll.prepend(Node(2))
-# dll.prepend(Node(3))
-# dll.prepend(Node(4))
-# dll.prepend(Node(5))
+# dll.prepend(1)
+# dll.prepend(2)
+# dll.prepend(3)
+# dll.prepend(4)
+# dll.prepend(5)
 # print(dll.head)
 
 # dll1 = DoublyLinkedList()
-# dll1.append(Node(1))
-# dll1.append(Node(2))
-# dll1.append(Node(3))
-# dll1.append(Node(4))
-# dll1.append(Node(5))
+# dll1.append(1)
+# dll1.append(2)
+# dll1.append(3)
+# dll1.append(4)
+# dll1.append(5)
 # print(dll1.head)
 
 # dll2 = DoublyLinkedList()
-# dll2.append(Node(1))
+# dll2.append(1)
 # print(dll2.head)
-# dll2.prepend(Node(2))
+# dll2.prepend(2)
 # print(dll2.head)
-# dll2.append(Node(3))
+# dll2.append(3)
 # print(dll2.head)
-# dll2.append(Node(4))
+# dll2.append(4)
 # print(dll2.head)
-# dll2.prepend(Node(5))
+# dll2.prepend(5)
 # print(dll2.head)
 # dll2.remove_beginning()
 # print(dll2.head)
@@ -134,10 +138,10 @@ class DoublyLinkedList():
 # for i in range(10):  # Fill list
 #     if i % 2 == 0:
 #         print(f'Appending {i}')
-#         dll3.append(Node(i))
+#         dll3.append(i)
 #     else:
 #         print(f'Prepending {i}')
-#         dll3.prepend(Node(i))
+#         dll3.prepend(i)
     
 #     print(dll3)
 
@@ -151,16 +155,16 @@ class DoublyLinkedList():
 
 #     print(dll3)
 
-## test pop
+# test pop
 # dll4 = DoublyLinkedList()
 
 # for i in range(10):  # Fill list
 #     if i % 2 == 0:
 #         print(f'Appending {i}')
-#         dll4.append(Node(i))
+#         dll4.append(i)
 #     else:
 #         print(f'Prepending {i}')
-#         dll4.prepend(Node(i))
+#         dll4.prepend(i)
     
 #     print(dll4)
 
@@ -172,14 +176,14 @@ class DoublyLinkedList():
 
 #     print(dll4)
 
-## test peek
+# test peek
 # dll5 = DoublyLinkedList()
 
 # for i in range(10):  # Fill list
 #     if i % 2 == 0:
-#         dll5.append(Node(i))
+#         dll5.append(i)
 #     else:
-#         dll5.prepend(Node(i))
+#         dll5.prepend(i)
     
 #     print(dll5)
 #     print(f'peek beginning {dll5.peek_beginning()}, peek end {dll5.peek_end()}\n')
