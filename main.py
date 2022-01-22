@@ -27,7 +27,7 @@ def handle_events():
 
 
 if __name__ == "__main__":
-    screen = Screen(30, 30, 30)
+    screen = Screen(50, 30, 20)
     screen.init_display()
 
     snake = Snake(screen)
