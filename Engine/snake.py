@@ -2,6 +2,7 @@ from Engine.doublylinkedlist import DoublyLinkedList
 from Engine.direction import Direction
 import random
 
+
 class Snake():
     def __init__(self, screen):
         self.screen_width = screen.get_width()
@@ -17,14 +18,14 @@ class Snake():
         self.body_set.add((head_x, head_y))
         self.empty_set.discard((head_x, head_y))
         self.food = self.create_food()
-        
+
     def generate_empty_set(self):
         s = set()
-        
+
         for i in range(self.screen_width):
             for j in range(self.screen_height):
                 s.add((i, j))
-        
+
         return s
 
     def get_head(self):
@@ -52,10 +53,10 @@ class Snake():
     def is_border_intersection(self, new_head_x, new_head_y):
         if new_head_x > self.screen_width or new_head_x < 0:
             return True
-        
+
         if new_head_y > self.screen_height or new_head_y < 0:
             return True
-        
+
         return False
 
     def is_eat_food(self, food):
@@ -64,7 +65,7 @@ class Snake():
 
         if head_x == food_x and head_y == food_y:
             return True
-        
+
         return False
 
     def create_food(self):
@@ -73,7 +74,7 @@ class Snake():
 
         return temp
 
-    def move_snake(self):        
+    def move_snake(self):
         curr_head_x, curr_head_y, curr_head_direction = self.get_head()
         new_head_direction = curr_head_direction
 
@@ -110,6 +111,13 @@ class Snake():
     def to_list(self):
         return self.body_list.to_list()
 
-    def key_pressed(self, direction):
-        x, y, dir = self.get_head()
-        self.update_head((x, y, direction))
+    def key_pressed(self, new_direction):
+        x, y, curr_direction = self.get_head()
+
+        if (curr_direction == Direction.DOWN and new_direction == Direction.UP
+                or curr_direction == Direction.UP and new_direction == Direction.DOWN
+                or curr_direction == Direction.LEFT and new_direction == Direction.RIGHT
+                or curr_direction == Direction.RIGHT and new_direction == Direction.LEFT):
+            return
+
+        self.update_head((x, y, new_direction))
