@@ -1,6 +1,5 @@
 from Engine.doublylinkedlist import DoublyLinkedList
 from Engine.direction import Direction
-import random
 
 
 class Snake():
