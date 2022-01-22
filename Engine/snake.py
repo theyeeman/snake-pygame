@@ -51,15 +51,15 @@ class Snake():
         self.body_list.prepend(head)
 
     def is_border_intersection(self, new_head_x, new_head_y):
-        if new_head_x > self.screen_width or new_head_x < 0:
+        if new_head_x >= self.screen_width or new_head_x < 0:
             return True
 
-        if new_head_y > self.screen_height or new_head_y < 0:
+        if new_head_y >= self.screen_height or new_head_y < 0:
             return True
 
         return False
 
-    def is_eat_food(self, food):
+    def is_eat_food(self):
         head_x, head_y, direction = self.body_list.peek_beginning()
         food_x, food_y = self.food
 
@@ -103,7 +103,7 @@ class Snake():
 
         self.insert_head((new_head_x, new_head_y, new_head_direction))
 
-        if not self.is_eat_food(self.food):
+        if not self.is_eat_food():
             self.remove_tail()
         else:
             self.food = self.create_food()
