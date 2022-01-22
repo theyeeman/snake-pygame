@@ -1,4 +1,3 @@
-from os import DirEntry
 import pygame
 from Engine.snake import Snake
 from Engine.screen import Screen
@@ -24,20 +23,20 @@ def handle_events():
                 snake.key_pressed(Direction.DOWN)
             elif event.key == K_LEFT:
                 snake.key_pressed(Direction.LEFT)
-
+            break
 
 if __name__ == "__main__":
-    screen = Screen(50, 30, 20)
+    screen = Screen(40, 30, 20)
     screen.init_display()
 
     snake = Snake(screen)
-
+    
     while not snake.is_dead:
         clock = pygame.time.Clock()
         screen.clear_screen()
         handle_events()
         screen.draw_snake(snake)
         snake.move_snake()
-        clock.tick(10)
-        
+        clock.tick(15)
+
     pygame.quit()
