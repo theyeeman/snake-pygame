@@ -1,7 +1,8 @@
 from pygame import Color, display, draw
 
-PIXEL_OFF = Color(0, 0, 0, 255)
-PIXEL_ON = Color(255, 255, 255, 255)
+BACKGROUND_COLOR = Color(0, 0, 0, 255)
+SNAKE_COLOR = Color(255, 255, 255, 255)
+FOOD_COLOR = Color(255, 0, 0, 255)
 
 class Screen:
     def __init__(self, width, height, scale=10):
@@ -25,7 +26,7 @@ class Screen:
         return self.scale
 
     def clear_screen(self):
-        self.surface.fill(PIXEL_OFF)
+        self.surface.fill(BACKGROUND_COLOR)
 
     def update(self):
         display.flip()
@@ -39,11 +40,11 @@ class Screen:
 
         draw.rect(self.surface, colour, (x_pos, y_pos, self.scale, self.scale))
 
-    def set_pixel_in_buffer(self, x, y):
-        self._draw_pixel(x, y, PIXEL_ON)
+    def set_pixel_in_buffer(self, x, y, colour):
+        self._draw_pixel(x, y, colour)
 
     def reset_pixel_in_buffer(self, x, y):
-        self._draw_pixel(x, y, PIXEL_OFF)
+        self._draw_pixel(x, y, BACKGROUND_COLOR)
 
     def is_pixel_on(self, x, y):
         x_pos = x * self.scale
@@ -51,19 +52,19 @@ class Screen:
 
         pixel_state = self.surface.get_at((x_pos, y_pos))
 
-        if (pixel_state == PIXEL_OFF):
+        if (pixel_state == BACKGROUND_COLOR):
             return False
         else:
             return True
 
-    def draw_snake(self, snake):
+    def draw_snake_init(self, snake):
         s = snake.to_list()
 
         for piece in s:
             x, y, dir = piece
-            self.set_pixel_in_buffer(x, y)
+            self.set_pixel_in_buffer(x, y, SNAKE_COLOR)
 
         food_x, food_y = snake.food
-        self.set_pixel_in_buffer(food_x, food_y)
+        self.set_pixel_in_buffer(food_x, food_y, FOOD_COLOR)
         
         self.update()

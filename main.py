@@ -34,12 +34,11 @@ if __name__ == "__main__":
     screen.init_display()
 
     snake = Snake(screen)
-    
+    screen.draw_snake_init(snake)
+
     while not snake.is_dead:
         clock = pygame.time.Clock()
-        screen.clear_screen()
         handle_events()
-        screen.draw_snake(snake)
         snake.move_snake()
         clock.tick(15)
 

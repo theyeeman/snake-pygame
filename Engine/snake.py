@@ -1,9 +1,11 @@
 from Engine.doublylinkedlist import DoublyLinkedList
 from Engine.direction import Direction
+from pygame import Color
 
 
 class Snake():
     def __init__(self, screen):
+        self.screen = screen
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
         self.body_list = DoublyLinkedList()
@@ -103,9 +105,20 @@ class Snake():
         self.insert_head((new_head_x, new_head_y, new_head_direction))
 
         if not self.is_eat_food():
+            tail_x, tail_y, tail_dir = self.get_tail()
             self.remove_tail()
+            self.screen.reset_pixel_in_buffer(tail_x, tail_y)
         else:
+            food_x, food_y = self.food
+            self.screen.reset_pixel_in_buffer(food_x, food_y)
             self.food = self.create_food()
+            food_x, food_y = self.food
+            self.screen.set_pixel_in_buffer(food_x, food_y, Color(255, 0, 0, 255))
+
+
+        self.screen.set_pixel_in_buffer(new_head_x, new_head_y, Color(255, 255, 255, 255))
+
+        self.screen.update()
 
     def to_list(self):
         return self.body_list.to_list()
