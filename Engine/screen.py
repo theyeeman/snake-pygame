@@ -10,6 +10,8 @@ class Screen:
         self.height = height * scale
         self.scale = scale
 
+        self.init_display()
+
     def init_display(self):
         display.init()
         self.surface = display.set_mode([self.width, self.height])

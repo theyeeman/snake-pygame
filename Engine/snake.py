@@ -46,8 +46,7 @@ class Snake():
         self.empty_set.add((x, y))
 
     def get_xy(self, head):
-        x, y, dir = head
-        return (x, y)
+        return (head[0], head[1])
 
     def insert_head(self, head):
         x, y = self.get_xy(head)
