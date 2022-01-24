@@ -16,6 +16,7 @@ class Screen:
     def init_display(self):
         display.init()
         self.surface = display.set_mode([self.width, self.height])
+        display.set_caption('Barebones Snake')
         self.clear_screen()
         self.update()
 
