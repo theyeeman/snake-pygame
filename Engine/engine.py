@@ -1,9 +1,5 @@
 import queue
 import pygame
-from Engine.snake import Snake
-from Engine.direction import Direction
-from Engine.screen import Screen
-from pygame.color import Color
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -15,6 +11,10 @@ from pygame.locals import (
     K_d,
     KEYDOWN,
 )
+from Engine.snake import Snake
+from Engine.direction import Direction
+from Engine.screen import Screen
+from Engine.screen import SNAKE_COLOR, FOOD_COLOR
 
 
 class Engine():
@@ -38,11 +38,14 @@ class Engine():
 
         self.screen.draw_init(self.snake)
 
-    def store_events_in_queue(self):
+    def store_events(self):
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key in self.valid_keys:
                     self.event_queue.put(event)
+            
+            if event.type == pygame.QUIT:
+                self.snake.is_dead = True
 
     def process_queue_event(self):
         try:
@@ -69,9 +72,6 @@ class Engine():
             return
         
         self.snake.update_head((x, y, new_direction))
-
-    def draw_screen(self):
-        pass
 
     def next_frame(self):
         curr_head_x, curr_head_y, curr_head_direction = self.snake.get_head()
@@ -104,12 +104,12 @@ class Engine():
             self.screen.reset_pixel_in_buffer(tail_x, tail_y)
         else:         
             self.snake.food = self.snake.create_food()
-            self.screen.set_pixel_in_buffer(self.snake.food[0], self.snake.food[1], Color(255, 0, 0, 255))
+            self.screen.set_pixel_in_buffer(self.snake.food[0], self.snake.food[1], FOOD_COLOR)
         
-        self.screen.set_pixel_in_buffer(new_head_x, new_head_y, Color(255, 255, 255, 255))
+        self.screen.set_pixel_in_buffer(new_head_x, new_head_y, SNAKE_COLOR)
         self.screen.update()
 
     def run_loop(self):
-        self.store_events_in_queue()
+        self.store_events()
         self.process_queue_event()
         self.next_frame()

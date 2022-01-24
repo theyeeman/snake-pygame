@@ -66,7 +66,6 @@ class Screen:
             x, y, dir = piece
             self.set_pixel_in_buffer(x, y, SNAKE_COLOR)
 
-        food_x, food_y = snake.food
-        self.set_pixel_in_buffer(food_x, food_y, FOOD_COLOR)
+        self.set_pixel_in_buffer(snake.food[0], snake.food[1], FOOD_COLOR)
         
         self.update()

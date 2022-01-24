@@ -86,8 +86,6 @@ class Snake():
         food = self.empty_set.pop()
         self.empty_set.add(food)
 
-        # self.screen.set_pixel_in_buffer(food[0], food[1], Color(255, 0, 0, 255))
-
         return food
         
     def to_list(self):
