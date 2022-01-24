@@ -82,7 +82,7 @@ class Snake():
         return new_head
 
     def is_border_intersection(self, head):
-        if head.x >= self.screen_width or head.y < 0:
+        if head.x >= self.screen_width or head.x < 0:
             return True
 
         if head.y >= self.screen_height or head.y < 0:
