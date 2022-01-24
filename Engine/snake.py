@@ -3,6 +3,16 @@ from Engine.direction import Direction
 from pygame import Color
 
 
+class Position():
+    def __init__(self, x, y, dir=None):
+        self.x = x
+        self.y = y
+        self.dir = dir
+
+    def get_xy(self):
+        return (self.x, self.y)
+
+
 class Snake():
     def __init__(self, screen):
         self.screen_width = screen.get_width()
@@ -40,22 +50,39 @@ class Snake():
 
     def remove_tail(self):
         tail = self.body_list.pop_end()
-        x, y = self.get_xy(tail)
-        self.body_set.discard((x, y))
-        self.empty_set.add((x, y))
+        self.body_set.discard((tail[0], tail[1]))
+        self.empty_set.add((tail[0], tail[1]))
 
     def get_xy(self, head):
         return (head[0], head[1])
 
     def insert_head(self, head):
-        x, y = self.get_xy(head)
         self.body_list.prepend(head)
-        self.body_set.add((x, y))
-        self.empty_set.discard((x, y))
+        self.body_set.add((head[0], head[1]))
+        self.empty_set.discard((head[0], head[1]))
 
     def update_head(self, head):
         self.body_list.remove_beginning()
         self.body_list.prepend(head)
+
+    def get_next_head(self):
+        curr_head_x, curr_head_y, curr_head_direction = self.snake.get_head()
+        new_head_direction = curr_head_direction
+
+        if curr_head_direction == Direction.UP:
+            new_head_x = curr_head_x
+            new_head_y = curr_head_y - 1
+        elif curr_head_direction == Direction.RIGHT:
+            new_head_x = curr_head_x + 1
+            new_head_y = curr_head_y
+        elif curr_head_direction == Direction.DOWN:
+            new_head_x = curr_head_x
+            new_head_y = curr_head_y + 1
+        elif curr_head_direction == Direction.LEFT:
+            new_head_x = curr_head_x - 1
+            new_head_y = curr_head_y
+
+        return (new_head_x, new_head_y, new_head_direction)
 
     def is_border_intersection(self, new_head_x, new_head_y):
         if new_head_x >= self.screen_width or new_head_x < 0:
