@@ -11,7 +11,7 @@ from pygame.locals import (
     K_d,
     KEYDOWN,
 )
-from Engine.snake import Snake
+from Engine.snake import Snake, Position
 from Engine.direction import Direction
 from Engine.screen import Screen
 from Engine.screen import SNAKE_COLOR, FOOD_COLOR
@@ -43,8 +43,8 @@ class Engine():
             if event.type == KEYDOWN:
                 if event.key in self.valid_keys:
                     self.event_queue.put(event)
-            
-            if event.type == pygame.QUIT:
+
+            elif event.type == pygame.QUIT:
                 self.snake.is_dead = True
 
     def process_queue_event(self):
@@ -52,61 +52,45 @@ class Engine():
             event = self.event_queue.get_nowait()
 
             if event.key == K_UP or event.key == K_w:
-                self.key_pressed(Direction.UP)
+                self.process_key_press(Direction.UP)
             elif event.key == K_RIGHT or event.key == K_d:
-                self.key_pressed(Direction.RIGHT)
+                self.process_key_press(Direction.RIGHT)
             elif event.key == K_DOWN or event.key == K_s:
-                self.key_pressed(Direction.DOWN)
+                self.process_key_press(Direction.DOWN)
             elif event.key == K_LEFT or event.key == K_a:
-                self.key_pressed(Direction.LEFT)
+                self.process_key_press(Direction.LEFT)
         except queue.Empty:
             return
 
-    def key_pressed(self, new_direction):
-        x, y, curr_direction = self.snake.get_head()
+    def process_key_press(self, new_direction):
+        head = self.snake.get_head()
 
-        if (curr_direction == Direction.DOWN and new_direction == Direction.UP
-                or curr_direction == Direction.UP and new_direction == Direction.DOWN
-                or curr_direction == Direction.LEFT and new_direction == Direction.RIGHT
-                or curr_direction == Direction.RIGHT and new_direction == Direction.LEFT):
+        if (head.direction == Direction.DOWN and new_direction == Direction.UP
+                or head.direction == Direction.UP and new_direction == Direction.DOWN
+                or head.direction == Direction.LEFT and new_direction == Direction.RIGHT
+                or head.direction == Direction.RIGHT and new_direction == Direction.LEFT):
             return
-        
-        self.snake.update_head((x, y, new_direction))
+
+        self.snake.overwrite_head(Position(head.x, head.y, new_direction))
 
     def next_frame(self):
-        curr_head_x, curr_head_y, curr_head_direction = self.snake.get_head()
-        new_head_direction = curr_head_direction
+        next_head = self.snake.get_next_head()
 
-        if curr_head_direction == Direction.UP:
-            new_head_x = curr_head_x
-            new_head_y = curr_head_y - 1
-        elif curr_head_direction == Direction.RIGHT:
-            new_head_x = curr_head_x + 1
-            new_head_y = curr_head_y
-        elif curr_head_direction == Direction.DOWN:
-            new_head_x = curr_head_x
-            new_head_y = curr_head_y + 1
-        elif curr_head_direction == Direction.LEFT:
-            new_head_x = curr_head_x - 1
-            new_head_y = curr_head_y
-        else:
-            print('No direction in head. Something went wrong. This should never print.')
-
-        if self.snake.is_snake_die(new_head_x, new_head_y):
+        if self.snake.is_snake_die(next_head):
             self.snake.is_dead = True
             return
 
-        self.snake.insert_head((new_head_x, new_head_y, new_head_direction))
+        self.snake.insert_head(next_head)
+        self.screen.set_pixel_in_buffer(next_head, SNAKE_COLOR)
 
         if not self.snake.is_eat_food():
-            tail_x, tail_y = self.snake.get_xy(self.snake.get_tail())
+            tail = self.snake.get_tail()
             self.snake.remove_tail()
-            self.screen.reset_pixel_in_buffer(tail_x, tail_y)
-        else:         
+            self.screen.reset_pixel_in_buffer(tail)
+        else:
             self.snake.food = self.snake.create_food()
-            self.screen.set_pixel_in_buffer(self.snake.food[0], self.snake.food[1], FOOD_COLOR)
-        
-        self.screen.set_pixel_in_buffer(new_head_x, new_head_y, SNAKE_COLOR)
+            self.screen.set_pixel_in_buffer(self.snake.food, FOOD_COLOR)
+
         self.screen.update()
 
     def run_loop(self):

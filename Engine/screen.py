@@ -4,6 +4,7 @@ BACKGROUND_COLOR = Color(0, 0, 0, 255)
 SNAKE_COLOR = Color(255, 255, 255, 255)
 FOOD_COLOR = Color(255, 0, 0, 255)
 
+
 class Screen:
     def __init__(self, width, height, scale=10):
         self.width = width * scale
@@ -36,19 +37,18 @@ class Screen:
 
         draw.rect(self.surface, colour, (x_pos, y_pos, self.scale, self.scale))
 
-    def set_pixel_in_buffer(self, x, y, colour):
-        self._draw_pixel(x, y, colour)
+    def set_pixel_in_buffer(self, obj, color):
+        self._draw_pixel(obj.x, obj.y, color)
 
-    def reset_pixel_in_buffer(self, x, y):
-        self._draw_pixel(x, y, BACKGROUND_COLOR)
+    def reset_pixel_in_buffer(self, obj):
+        self._draw_pixel(obj.x, obj.y, BACKGROUND_COLOR)
 
     def draw_init(self, snake):
-        s = snake.to_list()
+        s = snake.to_list_full()
 
         for piece in s:
-            x, y, dir = piece
-            self.set_pixel_in_buffer(x, y, SNAKE_COLOR)
+            self.set_pixel_in_buffer(piece, SNAKE_COLOR)
 
-        self.set_pixel_in_buffer(snake.food[0], snake.food[1], FOOD_COLOR)
-        
+        self.set_pixel_in_buffer(snake.food, FOOD_COLOR)
+
         self.update()
