@@ -5,7 +5,6 @@ from pygame import Color
 
 class Snake():
     def __init__(self, screen):
-        self.screen = screen
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
         self.body_list = DoublyLinkedList()
@@ -84,62 +83,13 @@ class Snake():
         return False
 
     def create_food(self):
-        temp = self.empty_set.pop()
-        self.empty_set.add(temp)
+        food = self.empty_set.pop()
+        self.empty_set.add(food)
 
-        return temp
+        # self.screen.set_pixel_in_buffer(food[0], food[1], Color(255, 0, 0, 255))
 
-    def move_snake(self):
-        curr_head_x, curr_head_y, curr_head_direction = self.get_head()
-        new_head_direction = curr_head_direction
-
-        if curr_head_direction == Direction.UP:
-            new_head_x = curr_head_x
-            new_head_y = curr_head_y - 1
-        elif curr_head_direction == Direction.RIGHT:
-            new_head_x = curr_head_x + 1
-            new_head_y = curr_head_y
-        elif curr_head_direction == Direction.DOWN:
-            new_head_x = curr_head_x
-            new_head_y = curr_head_y + 1
-        elif curr_head_direction == Direction.LEFT:
-            new_head_x = curr_head_x - 1
-            new_head_y = curr_head_y
-        else:
-            print('No direction in head. Something went wrong. This should never print.')
-
-        if self.is_snake_die(new_head_x, new_head_y):
-            self.is_dead = True
-            return
-
-        self.insert_head((new_head_x, new_head_y, new_head_direction))
-
-        if not self.is_eat_food():
-            tail_x, tail_y = self.get_xy(self.get_tail())
-            self.remove_tail()
-            self.screen.reset_pixel_in_buffer(tail_x, tail_y)
-        else:
-            food_x, food_y = self.food
-            self.screen.reset_pixel_in_buffer(food_x, food_y)
-            self.food = self.create_food()
-            food_x, food_y = self.food
-            self.screen.set_pixel_in_buffer(food_x, food_y, Color(255, 0, 0, 255))
-
-
-        self.screen.set_pixel_in_buffer(new_head_x, new_head_y, Color(255, 255, 255, 255))
-
-        self.screen.update()
-
+        return food
+        
     def to_list(self):
         return self.body_list.to_list()
 
-    def key_pressed(self, new_direction):
-        x, y, curr_direction = self.get_head()
-
-        if (curr_direction == Direction.DOWN and new_direction == Direction.UP
-                or curr_direction == Direction.UP and new_direction == Direction.DOWN
-                or curr_direction == Direction.LEFT and new_direction == Direction.RIGHT
-                or curr_direction == Direction.RIGHT and new_direction == Direction.LEFT):
-            return
-        
-        self.update_head((x, y, new_direction))

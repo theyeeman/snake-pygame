@@ -59,7 +59,7 @@ class Screen:
         else:
             return True
 
-    def draw_snake_init(self, snake):
+    def draw_init(self, snake):
         s = snake.to_list()
 
         for piece in s:
