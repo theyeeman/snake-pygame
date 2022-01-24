@@ -1,6 +1,3 @@
-from email import header
-
-
 class Node():
     def __init__(self, val=None):
         self.prev = None
@@ -55,7 +52,7 @@ class DoublyLinkedList():
     def pop_end(self):
         if not self.head:
             return None
-        
+
         ret = self.tail.val
 
         if not self.head.next:
@@ -86,7 +83,7 @@ class DoublyLinkedList():
         else:
             self.head = self.head.next
             self.head.prev = None
-        
+
         return ret
 
     def peek_beginning(self):
@@ -95,8 +92,10 @@ class DoublyLinkedList():
 
         return self.head.val
 
-    def to_list(self):
-        curr = self.head
+    def to_list_full(self):
+        return self.to_list_from_node(self.head)
+
+    def to_list_from_node(self, curr):
         ret = []
 
         while curr:

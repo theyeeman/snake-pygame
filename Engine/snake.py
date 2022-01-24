@@ -1,23 +1,40 @@
 from Engine.doublylinkedlist import DoublyLinkedList
 from Engine.direction import Direction
-from pygame import Color
+
+
+class Position():
+    def __init__(self, x, y, direction=None):
+        self.x = x
+        self.y = y
+        self.direction = direction
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+        return self.x == other.x and self.y == other.y
 
 
 class Snake():
     def __init__(self, screen):
-        self.screen = screen
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
         self.body_list = DoublyLinkedList()
         self.body_set = set()
+        self.empty_set = set()
         self.is_dead = False
-        self.empty_set = self.generate_empty_set()
 
+        self.create_class_properties()
+
+    def create_class_properties(self):
         head_x = self.screen_width // 2
         head_y = self.screen_height // 2
-        self.body_list.append((head_x, head_y, Direction.RIGHT))
-        self.body_set.add((head_x, head_y))
-        self.empty_set.discard((head_x, head_y))
+        self.body_list.append(Position(head_x, head_y, Direction.RIGHT))
+        self.body_set.add(self.get_head())
+        self.empty_set = self.generate_empty_set()
+        self.empty_set.discard(self.get_head())
         self.food = self.create_food()
 
     def generate_empty_set(self):
@@ -25,7 +42,7 @@ class Snake():
 
         for i in range(self.screen_width):
             for j in range(self.screen_height):
-                s.add((i, j))
+                s.add(Position(i, j))
 
         return s
 
@@ -37,99 +54,60 @@ class Snake():
 
     def remove_tail(self):
         tail = self.body_list.pop_end()
-        x, y, dir = tail
-        self.body_set.discard((x, y))
-        self.empty_set.add((x, y))
+        self.body_set.discard(tail)
+        self.empty_set.add(tail)
 
     def insert_head(self, head):
-        x, y, dir = head
         self.body_list.prepend(head)
-        self.body_set.add((x, y))
-        self.empty_set.discard((x, y))
+        self.body_set.add(head)
+        self.empty_set.discard(head)
 
-    def update_head(self, head):
+    def overwrite_head(self, head):
         self.body_list.remove_beginning()
         self.body_list.prepend(head)
 
-    def is_border_intersection(self, new_head_x, new_head_y):
-        if new_head_x >= self.screen_width or new_head_x < 0:
+    def get_next_head(self):
+        return self.get_next_position(self.get_head())
+
+    def get_next_position(self, curr):
+        if curr.direction == Direction.UP:
+            new_head = Position(curr.x, curr.y - 1, curr.direction)
+        elif curr.direction == Direction.RIGHT:
+            new_head = Position(curr.x + 1, curr.y, curr.direction)
+        elif curr.direction == Direction.DOWN:
+            new_head = Position(curr.x, curr.y + 1, curr.direction)
+        elif curr.direction == Direction.LEFT:
+            new_head = Position(curr.x - 1, curr.y, curr.direction)
+
+        return new_head
+
+    def is_border_intersection(self, head):
+        if head.x >= self.screen_width or head.y < 0:
             return True
 
-        if new_head_y >= self.screen_height or new_head_y < 0:
+        if head.y >= self.screen_height or head.y < 0:
             return True
 
         return False
 
-    def is_eat_food(self):
-        head_x, head_y, direction = self.body_list.peek_beginning()
-        food_x, food_y = self.food
+    def is_snake_eating_itself(self, head):
+        return head in self.body_set
 
-        if head_x == food_x and head_y == food_y:
+    def is_snake_die(self, head):
+        return (self.is_snake_eating_itself(head)
+                or self.is_border_intersection(head))
+
+    def is_eat_food(self):
+        if self.get_head() == self.food:
             return True
 
         return False
 
     def create_food(self):
-        temp = self.empty_set.pop()
-        self.empty_set.add(temp)
+        food = self.empty_set.pop()
+        self.empty_set.add(food)
 
-        return temp
+        return food
 
-    def move_snake(self):
-        curr_head_x, curr_head_y, curr_head_direction = self.get_head()
-        new_head_direction = curr_head_direction
-
-        if curr_head_direction == Direction.UP:
-            new_head_x = curr_head_x
-            new_head_y = curr_head_y - 1
-        elif curr_head_direction == Direction.RIGHT:
-            new_head_x = curr_head_x + 1
-            new_head_y = curr_head_y
-        elif curr_head_direction == Direction.DOWN:
-            new_head_x = curr_head_x
-            new_head_y = curr_head_y + 1
-        elif curr_head_direction == Direction.LEFT:
-            new_head_x = curr_head_x - 1
-            new_head_y = curr_head_y
-        else:
-            print('No direction in head. Something went wrong. This should never print.')
-
-        if (new_head_x, new_head_y) in self.body_set:  # Snake ran into itself
-            self.is_dead = True
-            return
-
-        if self.is_border_intersection(new_head_x, new_head_y):
-            self.is_dead = True
-            return
-
-        self.insert_head((new_head_x, new_head_y, new_head_direction))
-
-        if not self.is_eat_food():
-            tail_x, tail_y, tail_dir = self.get_tail()
-            self.remove_tail()
-            self.screen.reset_pixel_in_buffer(tail_x, tail_y)
-        else:
-            food_x, food_y = self.food
-            self.screen.reset_pixel_in_buffer(food_x, food_y)
-            self.food = self.create_food()
-            food_x, food_y = self.food
-            self.screen.set_pixel_in_buffer(food_x, food_y, Color(255, 0, 0, 255))
-
-
-        self.screen.set_pixel_in_buffer(new_head_x, new_head_y, Color(255, 255, 255, 255))
-
-        self.screen.update()
-
-    def to_list(self):
-        return self.body_list.to_list()
-
-    def key_pressed(self, new_direction):
-        x, y, curr_direction = self.get_head()
-
-        if (curr_direction == Direction.DOWN and new_direction == Direction.UP
-                or curr_direction == Direction.UP and new_direction == Direction.DOWN
-                or curr_direction == Direction.LEFT and new_direction == Direction.RIGHT
-                or curr_direction == Direction.RIGHT and new_direction == Direction.LEFT):
-            return
-
-        self.update_head((x, y, new_direction))
+    def to_list_full(self):
+        return self.body_list.to_list_full()
