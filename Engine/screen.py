@@ -1,3 +1,4 @@
+from tkinter.tix import TEXT
 from pygame import Color, display, draw, font
 
 BACKGROUND_COLOR = Color(0, 0, 0, 255)
@@ -59,7 +60,7 @@ class Screen:
 
         self.set_pixel_in_buffer(snake.food, FOOD_COLOR)
         self.score_to_buffer(0)
-
+        self.text_to_buffer('Press Enter to Start', TEXT_COLOR, self.scale*2, self.width, self.height, centered=True)
         self.update()
 
     def clear_info_bar(self):
@@ -68,9 +69,14 @@ class Screen:
 
     def score_to_buffer(self, score):
         self.clear_info_bar()
-        self.text_to_buffer("Score: " + str(score), 0, 0, TEXT_COLOR)
+        self.text_to_buffer("Score: "+str(score), TEXT_COLOR, self.scale-1, 0, 0)
 
-    def text_to_buffer(self, text, x, y, color):
-        rendered_text = font.SysFont('arial', self.scale - 1).render(str(text), True, color)
-        self.surface.blit(rendered_text, (x, y))
+    def text_to_buffer(self, text, color, size, x, y, centered=False):
+        rendered_text = font.SysFont('arial', size).render(str(text), True, color)
+
+        if centered:
+            text_rect = rendered_text.get_rect(center=(x//2, y//2))
+            self.surface.blit(rendered_text, text_rect)
+        else:
+            self.surface.blit(rendered_text, (x, y))
         
