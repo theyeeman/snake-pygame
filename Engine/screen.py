@@ -1,4 +1,3 @@
-from tkinter.tix import TEXT
 from pygame import Color, display, draw, font
 
 BACKGROUND_COLOR = Color(0, 0, 0, 255)
