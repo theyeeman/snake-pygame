@@ -10,6 +10,9 @@ TEXT_COLOR = Color(3, 232, 252, 255)
 
 class Screen:
     def __init__(self, width, height, scale=10):
+        display.init()
+        font.init()
+        display.set_caption('Barebones Snake')
         self.width = width * scale
         self.height = height * scale
         self.scale = scale
@@ -17,13 +20,8 @@ class Screen:
         self.init_display()
 
     def init_display(self):
-        display.init()
-        font.init()
         self.surface = display.set_mode([self.width, self.height])
-        display.set_caption('Barebones Snake')
         self.draw_info_bar_line()
-        # self.clear_screen()
-        # self.update()
 
     def get_width(self):
         return self.width // self.scale
@@ -52,15 +50,24 @@ class Screen:
     def reset_pixel_in_buffer(self, obj):
         self._draw_pixel(obj.x, obj.y, BACKGROUND_COLOR)
 
-    def draw_init(self, snake):
-        s = snake.to_list_full()
+    def draw_wait_init(self):
+        self.text_to_buffer('Press Enter to Start', TEXT_COLOR, self.scale*2, self.width, self.height, centered=True)
+        self.score_to_buffer(0)
+        self.update()
 
+    def draw_start_init(self, snake):
+        self.clear_screen()
+
+        s = snake.to_list_full()
         for piece in s:
             self.set_pixel_in_buffer(piece, SNAKE_COLOR)
 
         self.set_pixel_in_buffer(snake.food, FOOD_COLOR)
         self.score_to_buffer(0)
-        self.text_to_buffer('Press Enter to Start', TEXT_COLOR, self.scale*2, self.width, self.height, centered=True)
+        self.update()
+
+    def draw_lose_text(self):
+        self.text_to_buffer('You lost! Press Enter to try again', TEXT_COLOR, self.scale*2, self.width, self.height, centered=True)
         self.update()
 
     def clear_info_bar(self):

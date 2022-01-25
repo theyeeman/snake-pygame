@@ -9,6 +9,7 @@ from pygame.locals import (
     K_s,
     K_a,
     K_d,
+    K_RETURN,
     KEYDOWN,
 )
 from Engine.snake import Snake, Position
@@ -18,6 +19,9 @@ from Engine.screen import Screen, SNAKE_COLOR, FOOD_COLOR, BACKGROUND_COLOR, TEX
 
 class Engine():
     def __init__(self, width, height, scale):
+        pygame.init()
+        self.start = False
+        self.quit = False
         self.screen = Screen(width, height, scale)
         self.snake = Snake(self.screen)
         self.event_queue = queue.SimpleQueue()
@@ -35,7 +39,7 @@ class Engine():
             )
         )
 
-        self.screen.draw_init(self.snake)
+        self.screen.draw_wait_init()
 
     def store_events(self):
         for event in pygame.event.get():
@@ -43,8 +47,8 @@ class Engine():
                 if event.key in self.valid_keys:
                     self.event_queue.put(event)
 
-            elif event.type == pygame.QUIT:
-                self.snake.is_dead = True
+            if event.type == pygame.QUIT:
+                self.quit = True
 
     def process_queue_event(self):
         try:
@@ -98,3 +102,29 @@ class Engine():
         self.store_events()
         self.process_queue_event()
         self.next_frame()
+
+    def wait_for_start(self):
+        event = pygame.event.poll()
+
+        if event.type == KEYDOWN:
+            if event.key == K_RETURN:
+                self.start = True
+
+        if event.type == pygame.QUIT:
+            self.quit = True
+
+    def prepare_to_start(self):
+        self.screen.draw_start_init(self.snake)
+
+    def lose(self):
+        self.screen.draw_lose_text()
+
+    def wait_for_retry(self):
+        event = pygame.event.poll()
+
+        if event.type == KEYDOWN:
+            if event.key == K_RETURN:
+                self.snake.is_dead = False
+
+        if event.type == pygame.QUIT:
+            self.quit = True
