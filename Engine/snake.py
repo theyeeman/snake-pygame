@@ -25,6 +25,7 @@ class Snake():
         self.body_set = set()
         self.empty_set = set()
         self.is_dead = False
+        self.score = 0
 
         self.create_class_properties()
 
@@ -41,7 +42,7 @@ class Snake():
         s = set()
 
         for i in range(self.screen_width):
-            for j in range(self.screen_height):
+            for j in range(1, self.screen_height):  # Top row reserved for info bar
                 s.add(Position(i, j))
 
         return s
@@ -85,7 +86,7 @@ class Snake():
         if head.x >= self.screen_width or head.x < 0:
             return True
 
-        if head.y >= self.screen_height or head.y < 0:
+        if head.y >= self.screen_height or head.y < 1: # Top row reserved for info bar
             return True
 
         return False

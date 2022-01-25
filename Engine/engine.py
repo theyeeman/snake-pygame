@@ -13,8 +13,7 @@ from pygame.locals import (
 )
 from Engine.snake import Snake, Position
 from Engine.direction import Direction
-from Engine.screen import Screen
-from Engine.screen import SNAKE_COLOR, FOOD_COLOR
+from Engine.screen import Screen, SNAKE_COLOR, FOOD_COLOR, BACKGROUND_COLOR, TEXT_COLOR
 
 
 class Engine():
@@ -88,8 +87,10 @@ class Engine():
             self.snake.remove_tail()
             self.screen.reset_pixel_in_buffer(tail)
         else:
+            self.snake.score += 1
             self.snake.food = self.snake.create_food()
             self.screen.set_pixel_in_buffer(self.snake.food, FOOD_COLOR)
+            self.screen.score_to_buffer(self.snake.score)
 
         self.screen.update()
 
