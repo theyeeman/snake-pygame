@@ -21,7 +21,6 @@ class Engine():
     def __init__(self, width, height, scale):
         pygame.init()
         self.start = False
-        self.quit = False
         self.screen = Screen(width, height, scale)
         self.snake = Snake(self.screen)
         self.event_queue = queue.SimpleQueue()
@@ -48,7 +47,8 @@ class Engine():
                     self.event_queue.put(event)
 
             if event.type == pygame.QUIT:
-                self.quit = True
+                pygame.quit()
+                exit()
 
     def process_queue_event(self):
         try:
@@ -111,7 +111,8 @@ class Engine():
                 self.start = True
 
         if event.type == pygame.QUIT:
-            self.quit = True
+            pygame.quit()
+            exit()
 
     def prepare_to_start(self):
         self.screen.draw_start_init(self.snake)
@@ -127,4 +128,10 @@ class Engine():
                 self.snake.is_dead = False
 
         if event.type == pygame.QUIT:
-            self.quit = True
+            pygame.quit()
+            exit()
+
+    def reset(self):
+        self.start = False
+        self.snake = Snake(self.screen)
+        self.event_queue = queue.SimpleQueue()
