@@ -14,7 +14,7 @@ from pygame.locals import (
 )
 from Engine.snake import Snake, Position
 from Engine.direction import Direction
-from Engine.screen import Screen, SNAKE_COLOR, FOOD_COLOR, BACKGROUND_COLOR, TEXT_COLOR
+from Engine.screen import Screen, SNAKE_COLOR, FOOD_COLOR
 
 
 class Engine():
