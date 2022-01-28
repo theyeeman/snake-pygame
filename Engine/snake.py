@@ -1,20 +1,6 @@
 from Engine.doublylinkedlist import DoublyLinkedList
 from Engine.direction import Direction
-
-
-class Position():
-    def __init__(self, x, y, direction=None):
-        self.x = x
-        self.y = y
-        self.direction = direction
-
-    def __hash__(self):
-        return hash((self.x, self.y))
-
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return NotImplemented
-        return self.x == other.x and self.y == other.y
+from Engine.position import Position
 
 
 class Snake():
@@ -66,22 +52,6 @@ class Snake():
             new_head = Position(curr.x - 1, curr.y, curr.direction)
 
         return new_head
-
-    def is_border_intersection(self, head):
-        if head.x >= self.screen_width or head.x < 0:
-            return True
-
-        if head.y >= self.screen_height or head.y < 1: # Top row reserved for info bar
-            return True
-
-        return False
-
-    def is_snake_eating_itself(self, head):
-        return head in self.body_set
-
-    def is_snake_die(self, head):
-        return (self.is_snake_eating_itself(head)
-                or self.is_border_intersection(head))
 
     def to_list_full(self):
         return self.body_list.to_list_full()

@@ -31,7 +31,7 @@ class Engine():
 
     def create_food(self):
         food = self.empty_set.pop()
-        self.empty_set.add(food)
+        self.empty_set.add(food)  # food position is still considered and empty spot
 
         return food
 
@@ -41,10 +41,16 @@ class Engine():
 
         return False
 
+    def is_snake_die(self, next_head):
+        if next_head in self.empty_set:
+            return False
+        
+        return True
+
     def next_frame(self):
         next_head = self.snake.get_next_head()
 
-        if self.snake.is_snake_die(next_head):
+        if self.is_snake_die(next_head):
             self.snake.is_dead = True
             return
 
@@ -102,3 +108,4 @@ class Engine():
         self.start = False
         self.snake = Snake(self.screen)
         self.event_handler = EventHandler(self.snake)
+        self.empty_set = self.generate_empty_set()
