@@ -9,7 +9,6 @@ from pygame.locals import (
     K_s,
     K_a,
     K_d,
-    K_RETURN,
     KEYDOWN,
 )
 from Engine.direction import Direction
