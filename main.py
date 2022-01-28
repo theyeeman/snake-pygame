@@ -10,8 +10,8 @@ if __name__ == "__main__":
         engine.prepare_to_start()
 
         while not engine.snake.is_dead:
-            engine.clock.tick(15)
             engine.run_loop()
+            engine.clock.tick(15)
 
         engine.lose()
 

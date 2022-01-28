@@ -1,20 +1,8 @@
-import queue
 import pygame
-from pygame.locals import (
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
-    K_w,
-    K_s,
-    K_a,
-    K_d,
-    K_RETURN,
-    KEYDOWN,
-)
+from pygame.locals import K_RETURN, KEYDOWN
 from Engine.snake import Snake, Position
-from Engine.direction import Direction
-from Engine.screen import Screen, SNAKE_COLOR, FOOD_COLOR, BACKGROUND_COLOR, TEXT_COLOR
+from Engine.screen import Screen, SNAKE_COLOR, FOOD_COLOR
+from Engine.eventhandler import EventHandler
 
 
 class Engine():
@@ -23,58 +11,35 @@ class Engine():
         self.start = False
         self.screen = Screen(width, height, scale)
         self.snake = Snake(self.screen)
-        self.event_queue = queue.SimpleQueue()
+        self.event_handler = EventHandler(self.snake)
+        self.empty_set = self.generate_empty_set()
+        self.food = self.create_food()
         self.clock = pygame.time.Clock()
-        self.valid_keys = set(
-            (
-                K_UP,
-                K_DOWN,
-                K_LEFT,
-                K_RIGHT,
-                K_w,
-                K_s,
-                K_a,
-                K_d,
-            )
-        )
 
         self.screen.draw_wait_init()
 
-    def store_events(self):
-        for event in pygame.event.get():
-            if event.type == KEYDOWN:
-                if event.key in self.valid_keys:
-                    self.event_queue.put(event)
+    def generate_empty_set(self):
+        s = set()
 
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+        for i in range(self.screen.get_width()):
+            for j in range(1, self.screen.get_height()):  # Top row reserved for info bar
+                s.add(Position(i, j))
 
-    def process_queue_event(self):
-        try:
-            event = self.event_queue.get_nowait()
+        s.discard(self.snake.get_head())
 
-            if event.key == K_UP or event.key == K_w:
-                self.process_key_press(Direction.UP)
-            elif event.key == K_RIGHT or event.key == K_d:
-                self.process_key_press(Direction.RIGHT)
-            elif event.key == K_DOWN or event.key == K_s:
-                self.process_key_press(Direction.DOWN)
-            elif event.key == K_LEFT or event.key == K_a:
-                self.process_key_press(Direction.LEFT)
-        except queue.Empty:
-            return
+        return s
 
-    def process_key_press(self, new_direction):
-        head = self.snake.get_head()
+    def create_food(self):
+        food = self.empty_set.pop()
+        self.empty_set.add(food)
 
-        if (head.direction == Direction.DOWN and new_direction == Direction.UP
-                or head.direction == Direction.UP and new_direction == Direction.DOWN
-                or head.direction == Direction.LEFT and new_direction == Direction.RIGHT
-                or head.direction == Direction.RIGHT and new_direction == Direction.LEFT):
-            return
+        return food
 
-        self.snake.overwrite_head(Position(head.x, head.y, new_direction))
+    def is_eat_food(self):
+        if self.snake.get_head() == self.food:
+            return True
+
+        return False
 
     def next_frame(self):
         next_head = self.snake.get_next_head()
@@ -84,23 +49,25 @@ class Engine():
             return
 
         self.snake.insert_head(next_head)
+        self.empty_set.discard(next_head)
         self.screen.set_pixel_in_buffer(next_head, SNAKE_COLOR)
 
-        if not self.snake.is_eat_food():
+        if not self.is_eat_food():
             tail = self.snake.get_tail()
             self.snake.remove_tail()
+            self.empty_set.add(tail)
             self.screen.reset_pixel_in_buffer(tail)
         else:
             self.snake.score += 1
-            self.snake.food = self.snake.create_food()
-            self.screen.set_pixel_in_buffer(self.snake.food, FOOD_COLOR)
+            self.food = self.create_food()
+            self.screen.set_pixel_in_buffer(self.food, FOOD_COLOR)
             self.screen.score_to_buffer(self.snake.score)
 
         self.screen.update()
 
     def run_loop(self):
-        self.store_events()
-        self.process_queue_event()
+        self.event_handler.store_events()
+        self.event_handler.process_queue_event()
         self.next_frame()
 
     def wait_for_start(self):
@@ -115,7 +82,7 @@ class Engine():
             exit()
 
     def prepare_to_start(self):
-        self.screen.draw_start_init(self.snake)
+        self.screen.draw_start_init(self.snake, self.food)
 
     def lose(self):
         self.screen.draw_lose_text()
@@ -134,4 +101,4 @@ class Engine():
     def reset(self):
         self.start = False
         self.snake = Snake(self.screen)
-        self.event_queue = queue.SimpleQueue()
+        self.event_handler = EventHandler(self.snake)
