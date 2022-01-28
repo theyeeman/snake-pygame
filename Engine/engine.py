@@ -23,6 +23,8 @@ class Engine():
         self.start = False
         self.screen = Screen(width, height, scale)
         self.snake = Snake(self.screen)
+        self.empty_set = self.generate_empty_set()
+        self.food = self.create_food()
         self.event_queue = queue.SimpleQueue()
         self.clock = pygame.time.Clock()
         self.valid_keys = set(
@@ -39,6 +41,29 @@ class Engine():
         )
 
         self.screen.draw_wait_init()
+
+    def generate_empty_set(self):
+        s = set()
+
+        for i in range(self.screen.get_width()):
+            for j in range(1, self.screen.get_height()):  # Top row reserved for info bar
+                s.add(Position(i, j))
+
+        s.discard(self.snake.get_head())
+
+        return s
+
+    def create_food(self):
+        food = self.empty_set.pop()
+        self.empty_set.add(food)
+
+        return food
+
+    def is_eat_food(self):
+        if self.snake.get_head() == self.food:
+            return True
+
+        return False
 
     def store_events(self):
         for event in pygame.event.get():
@@ -84,16 +109,18 @@ class Engine():
             return
 
         self.snake.insert_head(next_head)
+        self.empty_set.discard(next_head)
         self.screen.set_pixel_in_buffer(next_head, SNAKE_COLOR)
 
-        if not self.snake.is_eat_food():
+        if not self.is_eat_food():
             tail = self.snake.get_tail()
             self.snake.remove_tail()
+            self.empty_set.add(tail)
             self.screen.reset_pixel_in_buffer(tail)
         else:
             self.snake.score += 1
-            self.snake.food = self.snake.create_food()
-            self.screen.set_pixel_in_buffer(self.snake.food, FOOD_COLOR)
+            self.food = self.create_food()
+            self.screen.set_pixel_in_buffer(self.food, FOOD_COLOR)
             self.screen.score_to_buffer(self.snake.score)
 
         self.screen.update()
@@ -115,7 +142,7 @@ class Engine():
             exit()
 
     def prepare_to_start(self):
-        self.screen.draw_start_init(self.snake)
+        self.screen.draw_start_init(self.snake, self.food)
 
     def lose(self):
         self.screen.draw_lose_text()

@@ -23,7 +23,7 @@ class Snake():
         self.screen_height = screen.get_height()
         self.body_list = DoublyLinkedList()
         self.body_set = set()
-        self.empty_set = set()
+        # self.empty_set = set()
         self.is_dead = False
         self.score = 0
 
@@ -34,18 +34,18 @@ class Snake():
         head_y = self.screen_height // 2
         self.body_list.append(Position(head_x, head_y, Direction.RIGHT))
         self.body_set.add(self.get_head())
-        self.empty_set = self.generate_empty_set()
-        self.empty_set.discard(self.get_head())
-        self.food = self.create_food()
+        # self.empty_set = self.generate_empty_set()
+        # self.empty_set.discard(self.get_head())
+        # self.food = self.create_food()
 
-    def generate_empty_set(self):
-        s = set()
+    # def generate_empty_set(self):
+    #     s = set()
 
-        for i in range(self.screen_width):
-            for j in range(1, self.screen_height):  # Top row reserved for info bar
-                s.add(Position(i, j))
+    #     for i in range(self.screen_width):
+    #         for j in range(1, self.screen_height):  # Top row reserved for info bar
+    #             s.add(Position(i, j))
 
-        return s
+    #     return s
 
     def get_head(self):
         return self.body_list.peek_beginning()
@@ -56,12 +56,10 @@ class Snake():
     def remove_tail(self):
         tail = self.body_list.pop_end()
         self.body_set.discard(tail)
-        self.empty_set.add(tail)
 
     def insert_head(self, head):
         self.body_list.prepend(head)
         self.body_set.add(head)
-        self.empty_set.discard(head)
 
     def overwrite_head(self, head):
         self.body_list.remove_beginning()
@@ -98,17 +96,17 @@ class Snake():
         return (self.is_snake_eating_itself(head)
                 or self.is_border_intersection(head))
 
-    def is_eat_food(self):
-        if self.get_head() == self.food:
-            return True
+    # def is_eat_food(self):
+    #     if self.get_head() == self.food:
+    #         return True
 
-        return False
+    #     return False
 
-    def create_food(self):
-        food = self.empty_set.pop()
-        self.empty_set.add(food)
+    # def create_food(self):
+    #     food = self.empty_set.pop()
+    #     self.empty_set.add(food)
 
-        return food
+    #     return food
 
     def to_list_full(self):
         return self.body_list.to_list_full()

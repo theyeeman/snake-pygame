@@ -56,14 +56,14 @@ class Screen:
         self.score_to_buffer(0)
         self.update()
 
-    def draw_start_init(self, snake):
+    def draw_start_init(self, snake, food):
         self.clear_screen()
 
         s = snake.to_list_full()
         for piece in s:
             self.set_pixel_in_buffer(piece, SNAKE_COLOR)
 
-        self.set_pixel_in_buffer(snake.food, FOOD_COLOR)
+        self.set_pixel_in_buffer(food, FOOD_COLOR)
         self.score_to_buffer(0)
         self.update()
 
